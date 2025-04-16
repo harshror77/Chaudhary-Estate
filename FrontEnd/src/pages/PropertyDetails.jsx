@@ -28,6 +28,7 @@ const PropertyDetailsPage = () => {
         setProperty(response.data.data[0]);
         setIsFavorite(response.data.data[0].isFavorite || false);
         console.log(response)
+        console.log("images",property.images)
       } catch (error) {
         console.error("Error fetching property details:", error);
       }
@@ -176,7 +177,7 @@ const PropertyDetailsPage = () => {
               animate={{ x: 0, opacity: 1 }}
               className="relative overflow-hidden rounded-2xl shadow-lg"
             >
-              {property.images?.length > 0 ? (
+              {property.images?.length > 1 ? (
                 <Slider {...sliderSettings}>
                   {property.images.map((img, index) => (
                     <div key={index}>
@@ -188,11 +189,23 @@ const PropertyDetailsPage = () => {
                     </div>
                   ))}
                 </Slider>
-              ) : (
-                <div className="w-full h-96 bg-gradient-to-r from-blue-50 to-purple-50 flex items-center justify-center">
-                  <p className="text-gray-500">No images available</p>
-                </div>
-              )}
+              ) : 
+                property.images?.length == 1 ?//check if only one image, slider stacks the image if it is only one
+                (
+                  <div className="h-96">
+                    <img
+                      src={property.images[0]}
+                      className="w-full h-96 object-cover"
+                      alt="Property"
+                    />
+                  </div>
+                )
+                :(//No image
+                  <div className="w-full h-96 bg-gradient-to-r from-blue-50 to-purple-50 flex items-center justify-center">
+                    <p className="text-gray-500">No images available</p>
+                  </div>
+                )
+              }
             </motion.div>
 
             {/* Property Info */}
