@@ -97,36 +97,57 @@ const getPropertyById = asyncHandler( async(req,res)=>{
     console.log("#####################################33",propertyId)
     if(!propertyId) throw new ApiError(400,"PropertyId not found")
 
-    const property = await  Property.aggregate([
-        {
-            $match:{
-                _id: new mongoose.Types.ObjectId(propertyId)
+        const property = await Property.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(propertyId)
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "_id",
+                    foreignField: "property",
+                    as: "reviews"
+                }
+            },
+            {//look if property is included in favorite list of user
+                $lookup: {
+                    from: "favorites",
+                    let: { userId: new mongoose.Types.ObjectId(req.user._id), propertyId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", "$$userId"] },
+                                        { $eq: ["$property", "$$propertyId"] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "favorite"
+                }
+            },
+            {
+                $addFields: {
+                    reviewCount: { $size: "$reviews" },
+                    AverageRating: { $avg: "$reviews.rating" },
+                    owner: { $first: "$owner" },
+                    isFavorite: { $gt: [{ $size: "$favorite" }, 0] } // if greater tha 0 than true else false
+                }
             }
-        },
-        {
-            $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner"
-            }
-        },
-        {
-            $lookup:{
-                from:"reviews",
-                localField:"_id",
-                foreignField:"property",
-                as:"reviews"
-            }
-        },
-        {
-            $addFields:{
-                reviewCount:{$size: "$reviews"},
-                AverageRating:{$avg:"$reviews.rating"},
-                owner: {$first:"$owner"}
-            }
-        }
-    ])
+        ]);
+        
 
     if(!property || property.length===0) throw new ApiError(401,"Property not found")
     return res
