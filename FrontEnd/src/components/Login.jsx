@@ -38,7 +38,7 @@ const Login = () => {
         dispatch(login(response))
         // After successful login
         localStorage.setItem('token', response.data.token); // Store the token in localStorage
-        navigate("/home"); // Redirect to home after successful login
+        navigate("/"); // Redirect to home after successful login
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed. Please try again.");
@@ -72,7 +72,7 @@ const Login = () => {
         dispatch(login(response))
         // After successful login
         localStorage.setItem('token', response.data.token); // Store the token in localStorage
-        navigate("/home"); // Redirect to home after successful login
+        navigate("/"); // Redirect to home after successful login
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Invalid OTP. Please try again.");

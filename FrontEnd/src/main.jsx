@@ -14,17 +14,17 @@ import SearchResultsPage from './pages/SearchResultsPage.jsx';
 import PropertyDetailsPage from './pages/PropertyDetails.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PropertyPage from './pages/AddProperty.jsx';
-import LoginHomePage from './pages/LoginHomePage.jsx';
+
 import EditProfile from './pages/EditProfile.jsx';
 import { Provider } from 'react-redux';
 import store from './store/store.js';
 import ChatPage from './pages/ChatPage.jsx';
 
+
 import { persistor } from './store/store.js';
 import { PersistGate } from "redux-persist/integration/react";
-
-
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AuthCheck from './components/AuthCheck.jsx'; 
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <LoginHomePage />
+        element: <AuthCheck /> 
       },
       {
         path: '/login',
@@ -50,17 +50,14 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />, // Protected routes
         children: [
-          
           {
             path: '/profile',
             element: <ProfilePage />
           },
-          
           {
             path: '/add-properties',
             element: <PropertyPage />
           },
-         
           {
             path: '/favorites',
             element: <FavoritesPage />
