@@ -28,7 +28,7 @@ const PropertyDetailsPage = () => {
         setProperty(response.data.data[0]);
         setIsFavorite(response.data.data[0].isFavorite || false);
         console.log(response)
-        console.log("images",property.images)
+       // console.log("images",property.images)
       } catch (error) {
         console.error("Error fetching property details:", error);
       }
@@ -292,13 +292,13 @@ const PropertyDetailsPage = () => {
             {/* Map */}
             <div className="bg-gray-50 rounded-2xl overflow-hidden shadow-sm">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 p-4">Location</h2>
-              {property.latitude && property.longitude ? (
+              {property.location.latitude && property.location.longitude ? (
                 <iframe
                   width="100%"
                   height="300"
                   className="border-0"
                   loading="lazy"
-                  src={`https://www.google.com/maps/embed/v1/place?key=YOUR_MAP_KEY&q=${property.latitude},${property.longitude}`}
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${property.location.longitude - 0.01},${property.location.latitude - 0.01},${property.location.longitude + 0.01},${property.location.latitude + 0.01}&marker=${property.location.latitude},${property.location.longitude}&layer=mapnik`}
                 ></iframe>
               ) : (
                 <div className="h-64 bg-gray-100 flex items-center justify-center">
