@@ -14,7 +14,7 @@ const razorpay = new Razorpay({
 export const createOrder = asyncHandler(async (req, res) => {
     const { propertyId, buyerId, sellerId, price, paymentMethod } = req.body;
 
-    if ([propertyId, buyerId, sellerId, price, paymentMethod].some((field) => !field || field.trim() === "")) {
+    if ([propertyId, buyerId, sellerId, paymentMethod].some((field) => !field || field.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
 

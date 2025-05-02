@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, ArrowLeft, ArrowRight, Heart, MapPin, UserRound, Home, Landmark } from "lucide-react";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+//import payment.jsx
+import Payment from "../components/Payment";
 const PropertyDetailsPage = () => {
   const { id } = useParams();
   const navigate  = useNavigate();
@@ -17,6 +19,8 @@ const PropertyDetailsPage = () => {
   const [socket, setSocket] = useState(null);
   const [buyOffer, setBuyOffer] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
+  //payment variable
+  const [showPayment,setShowPayment] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -226,6 +230,22 @@ const PropertyDetailsPage = () => {
                   <MapPin size={20} className="flex-shrink-0" />
                   <span className="text-lg">{property.address}</span>
                 </div>
+                {/** Buy Button */}
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                >
+                  Buy
+                </button>
+
+                {showPayment && (
+                  <Payment
+                  amount={property.price}           // raw number in rupees
+                  propertyId={property._id}         // real property ID
+                  sellerId={property.owner._id}       // seller’s user ID
+                  onClose={() => setShowPayment(false)}
+                />
+                )}
               </div>
 
               {/* Owner Card */}
