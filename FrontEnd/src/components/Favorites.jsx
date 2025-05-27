@@ -30,6 +30,7 @@ console.log('User from Redux:', user);
     };
 
     if (user?._id) fetchFavorites();
+    else setLoading(false);
   }, [user]);
 
   const handleRemoveFavorite = async (propertyId) => {

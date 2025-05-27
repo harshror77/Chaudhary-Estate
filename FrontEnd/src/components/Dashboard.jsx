@@ -168,7 +168,12 @@ const Dashboard = () => {
             </div>
             <div className="flex justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/30">
               <span className="font-medium">Address:</span>
-              <span>{user?.address || "N/A"}</span>
+              <span>
+                {user?.address && typeof user.address === 'object'
+                  ? `${user.address.street}, ${user.address.city}, ${user.address.state} ${user.address.postalCode}`
+                  : user?.address || "N/A"}
+              </span>
+
             </div>
             <div className="flex justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/30">
       <span className="font-medium">Last Login:</span>

@@ -79,7 +79,15 @@ const Header = () => {
         navigate("/");
       }
     } catch (error) {
-      console.error("Error while logging out: ", error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        // Treat as successful logout
+        console.warn("Already logged out or not authenticated, cleaning up frontend session.");
+        dispatch(logout());
+        localStorage.removeItem('token');
+        navigate("/");
+      } else {
+          console.error("Error while logging out: ", error.response?.data || error.message);
+      }
     }
   };
   

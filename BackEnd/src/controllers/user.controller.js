@@ -212,6 +212,11 @@ const googleLogin = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
+  //if user is not attached
+  if (!req.user) {
+    return res.status(401).json(new ApiResponse(401, {}, "User not authenticated"));
+}//
+
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { refreshToken: null } },

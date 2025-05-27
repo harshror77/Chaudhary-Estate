@@ -40,7 +40,7 @@ router.route("/avatar").put(
   updateUserAvatar
 );
 router.route("/getAllUsers").get(getAllUsers);
-router.route("/logout").delete(verifyJWT, logoutUser);
+router.route("/logout").delete(logoutUser);//dont verify while logging out
 router.route("/profile").get(verifyJWT, getProfile);
 router.route("/delete").delete(verifyJWT, deleteUser);
 router.route("/google-login").post(googleLogin);
