@@ -20,7 +20,7 @@ const ChatContainer = ({ user }) => {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/chat/get-message/${user._id}`,
+                    `${import.meta.env.VITE_BACKEND_URL}/api/v1/chat/get-message/${user._id}`,
                     { withCredentials: true }
                 );
                 // Ensure response.data.message is an array, default to empty array if not

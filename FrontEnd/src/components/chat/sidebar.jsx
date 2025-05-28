@@ -12,7 +12,7 @@ const SideBar = ({ onUserClick }) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/`, {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/chat/`, {
                     withCredentials: true,
                 });
                 // Ensure response.data.message is an array, default to empty array if not
