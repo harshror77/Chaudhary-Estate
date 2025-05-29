@@ -26,17 +26,39 @@ const Header = () => {
   const [query, setQuery] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [location, setLocation] = useState('');
+  const [priceFrom, setPriceFrom] = useState('');
+  const [priceTo, setPriceTo] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
 
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
   const status = useSelector((state) => state.auth.status);
   // Handle Search
-  const handleSearch = () => {
-    if (query) {
-      navigate(`/searchedUsers?query=${query}`);
-      setQuery("");
-    }
+  const handleApplyFilters = () => {
+    const filterQuery = {
+      location,
+      priceFrom,
+      priceTo,
+      status: statusFilter,
+    };
+  
+    console.log('Filters applied:', filterQuery);
+  
+    // If you want to navigate:
+    if(location || priceFrom || priceTo || statusFilter) navigate(`/search?location=${location}&priceFrom=${priceFrom}&priceTo=${priceTo}&status=${statusFilter}`);
+  
+    // OR: if you just want to set a query object:
+    setQuery(filterQuery);
+  
+    // Optional: clear inputs if needed
+    setLocation('');
+    setPriceFrom('');
+    setPriceTo('');
+    setStatusFilter('');
   };
+  
 
   // Handle Sidebar Toggle
   const toggleSidebar = () => {
@@ -105,26 +127,63 @@ const Header = () => {
           Choudhary Estate
         </Link>
 
-        {/* Search Box (Centered) */}
+        {/* Filters Row (Centered) */}
         <div className="flex-grow flex justify-center mx-4">
           {status && (
-            <div className="flex items-center space-x-2 bg-white dark:bg-gray-700 shadow-lg rounded-full px-4 py-1 w-full max-w-md">
+            <div className="bg-white dark:bg-gray-700 shadow-lg rounded-full px-4 py-2 max-w-5xl flex items-center space-x-2 justify-center mx-auto w-full max-w-full sm:max-w-5xl">
+              
+              {/* Location */}
               <input
                 type="text"
-                placeholder="Search..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="flex-grow text-gray-700 dark:text-gray-200 focus:outline-none rounded-full px-2 py-1"
+                placeholder="Enter city"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-48 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
               />
-              <button
-                onClick={handleSearch}
-                className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition duration-300"
+
+              {/* Price From */}
+              <input
+                type="number"
+                placeholder="Price From"
+                value={priceFrom}
+                onChange={(e) => setPriceFrom(e.target.value)}
+                className="w-24 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
+              />
+
+              {/* Price To */}
+              <input
+                type="number"
+                placeholder="Price To"
+                value={priceTo}
+                onChange={(e) => setPriceTo(e.target.value)}
+                className="w-24 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
+              />
+
+              {/* Status */}
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-36 rounded-full px-2 py-2 text-gray-700 dark:text-black-200 focus:outline-none flex justify-center mx-4"
               >
-                <Search size={20} />
+                <option value="" className="text-gray-700 dark:text-black-200">Select Status</option>
+                <option value="rent">Rent</option>
+                <option value="sold">Sold</option>
+                <option value="buy">Buy</option>
+              </select>
+
+              {/* Apply Button */}
+              <button
+                onClick={handleApplyFilters}
+                className="bg-blue-600 text-white rounded-full px-6 py-2 hover:bg-blue-700 transition"
+              >
+                Apply Filters
               </button>
             </div>
           )}
         </div>
+
+
+
 
         {/* User and Dark Mode Section */}
         <div className="flex items-center space-x-4">
