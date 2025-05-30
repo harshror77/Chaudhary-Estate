@@ -35,8 +35,9 @@ const getUserForSideBar = asyncHandler(async (req, res) => {
                 pipeline: [
                     {
                         $project: {
-                            username: 1,
-                            fullName: 1,
+                            _id: 1,
+                            username: "$fullname",
+                            // fullName: 1,
                             avatar: 1
                         }
                     }
@@ -52,8 +53,9 @@ const getUserForSideBar = asyncHandler(async (req, res) => {
                 pipeline: [
                     {
                         $project: {
-                            username: 1,
-                            fullName: 1,
+                            _id: 1,
+                            username: "$fullname",
+                            // fullName: 1,
                             avatar: 1
                         }
                     }
@@ -76,6 +78,32 @@ const getUserForSideBar = asyncHandler(async (req, res) => {
                         "$senderDetails"
                     ]
                 }
+            }
+        },
+        {
+            $lookup: {
+                from: "messages",
+                let: { userId: "$userDetails._id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$senderId", "$$userId"] },
+                                    { $eq: ["$receiverId", new mongoose.Types.ObjectId(userId)] },
+                                    { $eq: ["$isRead", false] }
+                                ]
+                            }
+                        }
+                    },
+                    { $limit: 1 }
+                ],
+                as: "unreadMessages"
+            }
+        },
+        {
+            $addFields: {
+                "userDetails.hasUnread": { $gt: [{ $size: "$unreadMessages" }, 0] }
             }
         },
         {
@@ -115,6 +143,12 @@ const getMessages = asyncHandler(async (req, res) => {
     if (!mongoose.isValidObjectId(myId) || !mongoose.isValidObjectId(userToChat)){
         throw new ApiError(401, "Invalid user ID");
     }
+
+    await Message.updateMany(
+        { senderId: new mongoose.Types.ObjectId(userToChat), receiverId: new mongoose.Types.ObjectId(myId), isRead: false },
+        { $set: { isRead: true } }
+    );
+
     const messages = await Message.aggregate([
         {
             $match: {

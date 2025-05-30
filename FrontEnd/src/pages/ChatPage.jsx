@@ -22,7 +22,7 @@ function ChatPage() {
                 {selectedUser ? (
                     <ChatContainer user={selectedUser} />
                 ) : (
-                    <div className="flex items-center justify-center h-full text-gray-500">
+                    <div className="flex items-center justify-center h-full text-lg text-gray-500">
                         Select a user to start chatting.
                     </div>
                 )}

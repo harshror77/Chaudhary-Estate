@@ -16,7 +16,7 @@ const SideBar = ({ onUserClick }) => {
                     withCredentials: true,
                 });
                 // Ensure response.data.message is an array, default to empty array if not
-                const fetchedUsers = Array.isArray(response.data?.message) ? response.data.message : [];
+                const fetchedUsers = Array.isArray(response.data?.data) ? response.data.data : [];
                 setUsers(fetchedUsers);
                 setLoading(false);
             } catch (err) {
@@ -27,6 +27,17 @@ const SideBar = ({ onUserClick }) => {
 
         fetchUsers();
     }, []);
+
+    const handleUserClick = (user) => {
+        onUserClick(user);
+
+        // Remove unread highlight for clicked user
+        setUsers((prevUsers) =>
+            prevUsers.map((u) =>
+                u._id === user._id ? { ...u, hasUnread: false } : u
+            )
+        );
+    };
 
     if (loading) {
         return (
@@ -47,29 +58,49 @@ const SideBar = ({ onUserClick }) => {
         <div
             className={`h-full p-3 sm:p-4 border-r ${mode === "dark"
                 ? "bg-gray-900 border-gray-700 text-white"
-                : "bg-gray-100 border-gray-300 text-gray-700"
+                : "bg-gray-100 border-gray-300 text-black-700"
                 }`}
         >
-            <h2 className="text-lg font-bold mb-4">Chat Users</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">Chat Users</h2>
             {users.length > 0 ? (
                 <ul className="space-y-3">
                     {users.map((user) => (
                         <li
-                            key={user._id}
-                            onClick={() => onUserClick(user)}
-                            className={`flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:${mode === "dark" ? "bg-gray-800" : "bg-gray-200"
-                                }`}
-                        >
+                            onClick={() => handleUserClick(user)}
+                            className={`flex items-center space-x-4 cursor-pointer p-3 rounded-lg
+                                ${
+                                user.hasUnread
+                                    ? mode==="dark"
+                                        ? "bg-blue-900" 
+                                        : "bg-blue-100" // Highlight for unread messages
+                                    : mode === "dark"
+                                    ? "hover:bg-gray-800"
+                                    : "hover:bg-gray-200"
+                                }
+                                ${
+                                    user.hasUnread
+                                        ? "border-2 border-blue-400" // ✅ subtle blue border if unread
+                                        : ""
+                                }
+                            `}
+                            >
                             <img
                                 src={user.avatar || "/default-avatar.png"}
                                 alt={`${user.username}'s avatar`}
-                                className="w-10 h-10 rounded-full border border-gray-300"
+                                className="w-14 h-14 rounded-full border border-gray-300"
                             />
-                            <span className="text-sm font-medium">{user.username}</span>
-                            {onlineUsers &&
-                                Object.keys(onlineUsers).includes(user._id) && (
-                                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                            <span className={`text-lg ${user.hasUnread ? "font-bold" : "font-medium"}`}>
+                                {user.username}
+                            </span>
+                            <div className="flex items-center ml-auto space-x-2">
+                                {user.hasUnread && (
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span> // ✅ blue dot if unread
                                 )}
+                                {onlineUsers &&
+                                    Object.keys(onlineUsers).includes(user._id) && (
+                                        <span className="w-2 h-2 rounded-full bg-green-500"></span> // online indicator
+                                    )}
+                            </div>
                         </li>
                     ))}
                 </ul>
