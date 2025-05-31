@@ -24,7 +24,7 @@ const ChatContainer = ({ user }) => {
                     { withCredentials: true }
                 );
                 // Ensure response.data.message is an array, default to empty array if not
-                const fetchedMessages = Array.isArray(response.data?.message) ? response.data.message : [];
+                const fetchedMessages = Array.isArray(response.data?.data) ? response.data.data : [];
                 setMessages(fetchedMessages);
             } catch (error) {
                 console.error(
@@ -64,13 +64,13 @@ const ChatContainer = ({ user }) => {
         }
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/chat/send-message/${user._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/v1/chat/send-message/${user._id}`,
                 formData,
                 { withCredentials: true }
             );
 
-            if (response.data.message) {
-                const newMsg = response.data.message;
+            if (response.data.data) {
+                const newMsg = response.data.data;
                 const socket = getSocket();
                 if (socket) {
                     socket.emit("message", { room: user._id, message: newMsg });

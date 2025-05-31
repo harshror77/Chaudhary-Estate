@@ -1,4 +1,3 @@
-
 import dotenv from "dotenv"
 import {app} from './app.js'
 import {server} from './utils/socket.io.js'

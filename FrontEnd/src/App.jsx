@@ -5,6 +5,7 @@ import { Header } from './components/index.js';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from './pages/Loader.jsx';
+import { connectSocket } from './lib/socket.js';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -19,6 +20,7 @@ function App() {
         console.log("app: ",userData)
         if (userData.data.data) {
           dispatch(login(userData.data.data));
+          connectSocket(userData.data.data._id);
         }
         else {
           dispatch(logout());
