@@ -14,6 +14,7 @@ import SearchResultsPage from './pages/SearchResultsPage.jsx';
 import PropertyDetailsPage from './pages/PropertyDetails.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PropertyPage from './pages/AddProperty.jsx';
+import FilterPropertyPage from './pages/FilterPropertyPage.jsx';
 
 import EditProfile from './pages/EditProfile.jsx';
 import { Provider } from 'react-redux';
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: '/search',
         element: <SearchResultsPage />
+      },
+      {
+        path: '/filterProperty',//filter route
+        element: <FilterPropertyPage />
       },
       {
         path: '/property/:id',

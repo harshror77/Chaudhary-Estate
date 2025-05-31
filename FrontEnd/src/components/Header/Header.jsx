@@ -47,7 +47,7 @@ const Header = () => {
     console.log('Filters applied:', filterQuery);
   
     // If you want to navigate:
-    if(location || priceFrom || priceTo || statusFilter) navigate(`/search?location=${location}&priceFrom=${priceFrom}&priceTo=${priceTo}&status=${statusFilter}`);
+    if(location || priceFrom || priceTo || statusFilter) navigate(`/filterProperty?location=${location}&priceFrom=${priceFrom}&priceTo=${priceTo}&status=${statusFilter}`);
   
     // OR: if you just want to set a query object:
     setQuery(filterQuery);
@@ -166,9 +166,9 @@ const Header = () => {
                 className="w-36 rounded-full px-2 py-2 text-gray-700 dark:text-black-200 focus:outline-none flex justify-center mx-4"
               >
                 <option value="" className="text-gray-700 dark:text-black-200">Select Status</option>
-                <option value="rent">Rent</option>
+                <option value="for rent">For Rent</option>
                 <option value="sold">Sold</option>
-                <option value="buy">Buy</option>
+                <option value="for sale">For Sale</option>
               </select>
 
               {/* Apply Button */}
@@ -181,7 +181,7 @@ const Header = () => {
             </div>
           )}
         </div>
-
+        {/** filter property ends */}
 
 
 

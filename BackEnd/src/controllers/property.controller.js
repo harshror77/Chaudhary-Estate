@@ -315,6 +315,57 @@ const changePropertyStatus = asyncHandler(async (req, res) => {
 });
 
 
+
+
+//filter property
+
+const filterProperties = async (req, res) => {
+    try {
+        const { location, priceFrom, priceTo, status } = req.query;
+        //console.log(req.query)
+
+        const query = {};
+
+        // Location (search in address, case-insensitive partial match)
+        if (location) {
+            query['location.address'] = { $regex: location, $options: 'i' };
+        }
+        //else console.log("not found")
+
+        // Price range
+        if (priceFrom || priceTo) {
+            query.price = {};
+            if (priceFrom) {
+                query.price.$gte = Number(priceFrom);
+            }
+            if (priceTo) {
+                query.price.$lte = Number(priceTo);
+            }
+        }
+
+        // Status
+        if (status) {
+            query.status = status;
+        }
+
+        const properties = await Property.find(query);
+
+        res.status(200).json({
+            success: true,
+            count: properties.length,
+            data: properties
+        });
+    } catch (error) {
+        console.error('Error in filterProperties:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error while filtering properties'
+        });
+    }
+};
+
+
+
 export {
     uploadProperty,
     updateProperty,
@@ -323,5 +374,6 @@ export {
     deleteProperty,
     toggleStatus,
     changePropertyStatus,
-    getMyListings
+    getMyListings,
+    filterProperties
 }

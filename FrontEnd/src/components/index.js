@@ -17,6 +17,7 @@ import Home from "../components/Home.jsx";
 import LoginHome from "./LoginHome.jsx";
 import ChatContainer from "./chat/ChatContainer.jsx"
 import Sidebar from "./chat/sidebar.jsx"
+import FilterProperty from "./FilterProperty.jsx";//filter Property
 export {
     Header,
     Login,
@@ -36,5 +37,6 @@ export {
     Home,
     LoginHome,
     ChatContainer,
-    Sidebar
+    Sidebar,
+    FilterProperty//filter property
 }
