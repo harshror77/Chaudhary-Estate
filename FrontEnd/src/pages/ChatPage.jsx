@@ -15,7 +15,10 @@ function ChatPage() {
     return (
         <div className="flex flex-col md:flex-row h-screen">
             <div className="md:w-1/3  md:h-full">
-                <Sidebar onUserClick={handleUserClick} />
+                <Sidebar 
+                    onUserClick={handleUserClick} 
+                    currentlyOpenChatId={selectedUser ? selectedUser._id : null}
+                />
             </div>
 
             <div className="md:w-2/3 h-full">

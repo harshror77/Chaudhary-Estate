@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { getSocket } from "../../lib/socket.js";
 
-const SideBar = ({ onUserClick }) => {
+const SideBar = ({ onUserClick, currentlyOpenChatId }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -27,6 +28,29 @@ const SideBar = ({ onUserClick }) => {
 
         fetchUsers();
     }, []);
+
+    // listen for new unread message events
+    useEffect(() => {
+        const socket = getSocket();
+        const handleIncomingMessage = (messageData) => {
+            const senderId = messageData.senderId;
+
+            // If we’re not currently chatting with this user, mark as unread
+            if (senderId !== currentlyOpenChatId) {
+                setUsers((prevUsers) =>
+                    prevUsers.map((u) =>
+                        u._id === senderId ? { ...u, hasUnread: true } : u
+                    )
+                );
+            }
+        };
+
+        socket.on("recieve-message", handleIncomingMessage);
+
+        return () => {
+            socket.off("recieve-message", handleIncomingMessage);
+        };
+    }, [currentlyOpenChatId]);
 
     const handleUserClick = (user) => {
         onUserClick(user);
@@ -66,6 +90,7 @@ const SideBar = ({ onUserClick }) => {
                 <ul className="space-y-3">
                     {users.map((user) => (
                         <li
+                            key={user._id}
                             onClick={() => handleUserClick(user)}
                             className={`flex items-center space-x-4 cursor-pointer p-3 rounded-lg
                                 ${
@@ -79,27 +104,31 @@ const SideBar = ({ onUserClick }) => {
                                 }
                                 ${
                                     user.hasUnread
-                                        ? "border-2 border-blue-400" // ✅ subtle blue border if unread
+                                        ? "border-2 border-blue-400" 
                                         : ""
                                 }
                             `}
                             >
-                            <img
-                                src={user.avatar || "/default-avatar.png"}
-                                alt={`${user.username}'s avatar`}
-                                className="w-14 h-14 rounded-full border border-gray-300"
-                            />
+                            <div className="relative w-14 h-14">
+                                <img
+                                    src={user.avatar || "/default-avatar.png"}
+                                    alt={`${user.username}'s avatar`}
+                                    className="w-14 h-14 rounded-full border border-gray-300"
+                                />
+                                {onlineUsers && Object.keys(onlineUsers).includes(user._id) && (
+                                    <span
+                                        className="absolute bottom-0 right-0 block w-4 h-4 bg-green-500 rounded-full border-2 border-white"
+                                        title="Online"
+                                    ></span>
+                                )}
+                            </div>
                             <span className={`text-lg ${user.hasUnread ? "font-bold" : "font-medium"}`}>
                                 {user.username}
                             </span>
                             <div className="flex items-center ml-auto space-x-2">
                                 {user.hasUnread && (
-                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span> // ✅ blue dot if unread
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span> 
                                 )}
-                                {onlineUsers &&
-                                    Object.keys(onlineUsers).includes(user._id) && (
-                                        <span className="w-2 h-2 rounded-full bg-green-500"></span> // online indicator
-                                    )}
                             </div>
                         </li>
                     ))}

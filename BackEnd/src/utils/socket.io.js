@@ -25,7 +25,14 @@ io.on("connection", (socket) => {
       userSocketMap[userId] = socket.id;
       socket.join(userId); 
   }
+
   io.emit("getOnlineUsers", userSocketMap);
+
+  socket.on("join-room", (roomId) => {  // <-- added block start
+    console.log(`Socket ${socket.id} joining room: ${roomId}`);
+    socket.join(roomId);
+  });
+  
   socket.on("message", ({ room, message }) => {
     io.to(room).emit("recieve-message", { message, senderId: userId });
 
