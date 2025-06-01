@@ -59,6 +59,18 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
                   transactionId: transaction._id
                 }
               );
+
+              await axios.post(
+                `http://localhost:3000/notifications/`,
+                {
+                  type: 'transaction', 
+                  recipient: sellerId,     
+                  property: propertyId,  
+                  message: `Payment of ₹${amount} has been completed for this property.`,
+                },
+                { withCredentials: true }
+              );
+
               alert('Payment successful and verified!');
             } catch (err) {
               console.error(err);

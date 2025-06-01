@@ -8,9 +8,10 @@ let socket;
 export const connectSocket = (userId) => {
   if (!socket) {
     socket = io(BASEURL, {
-      query: {
+      auth: {
         userId,
       },
+      withCredentials: true,
     });
 
     socket.on("connect", () => {

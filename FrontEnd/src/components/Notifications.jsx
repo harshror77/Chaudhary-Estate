@@ -6,6 +6,19 @@ import { toast } from "react-toastify";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 
+const getNotificationIcon = (type) => {
+  switch (type) {
+    case "chat":
+      return <MessageCircle size={18} className="text-purple-600" />;
+    case "favorite":
+      return <Heart size={18} className="text-pink-500" />;
+    case "BUY_OFFER":
+      return <ShoppingBag size={18} className="text-green-600" />;
+    default:
+      return <Bell size={18} className="text-gray-400" />;
+  }
+};
+
 const Notifications = () => {
   const user  = useSelector(state=>state.auth.userData);
   const [notifications, setNotifications] = useState([]);
@@ -71,7 +84,7 @@ const Notifications = () => {
       path: "/socket.io/",  // Ensure this matches your backend's socket path
       withCredentials: true,
       auth: {
-        token: user.refreshToken,
+        userId: user._id,
       },
     });
   
@@ -110,7 +123,7 @@ const Notifications = () => {
           Notifications
         </h2>
         <button 
-          onClick={() => onMarkRead(null)}
+          onClick={() => handleMarkRead(null)}
           className="text-blue-600 hover:text-blue-800 text-sm font-medium"
         >
           Mark all as read
@@ -128,8 +141,13 @@ const Notifications = () => {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className={`group relative p-4 rounded-xl shadow-sm transition-all
-                  ${!notification.isRead ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-white'}`}
-              >
+                  ${!notification.isRead ? 'bg-blue-100 border-l-4 border-blue-500' : 'bg-white'}`}
+              > 
+                {!notification.isRead && (
+                  <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded tracking-wide select-none">
+                    NEW
+                  </span>
+                )}
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
                   <div className="flex-shrink-0">
@@ -150,7 +168,7 @@ const Notifications = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-800">
-                        {notification.sender?.name || 'Unknown User'}
+                        {notification.sender?.fullname || 'Unknown User'}
                       </span>
                       {getNotificationIcon(notification.type)}
                     </div>
@@ -165,14 +183,14 @@ const Notifications = () => {
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {!notification.isRead && (
                           <button
-                            onClick={() => onMarkRead(notification._id)}
+                            onClick={() => handleMarkRead(notification._id)}
                             className="text-xs text-blue-600 hover:text-blue-800"
                           >
                             Mark read
                           </button>
                         )}
                         <button
-                          onClick={() => onDelete(notification._id)}
+                          onClick={() => handleDelete(notification._id)}
                           className="text-gray-400 hover:text-red-600"
                         >
                           <X size={16} />
