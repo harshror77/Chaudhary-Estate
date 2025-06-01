@@ -11,7 +11,6 @@ import {
   Settings,
   Home,
   LogOut,
-  Search,
   Bell,
   Heart,
   Moon,
@@ -19,6 +18,7 @@ import {
   Banknote,
   MessageCircleMore
 } from "lucide-react";
+import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { logout } from "../../store/authSlice.js";
 
 const Header = () => {
@@ -31,10 +31,10 @@ const Header = () => {
   const [priceTo, setPriceTo] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
   const status = useSelector((state) => state.auth.status);
+
   // Handle Search
   const handleApplyFilters = () => {
     const filterQuery = {
@@ -44,21 +44,12 @@ const Header = () => {
       status: statusFilter,
     };
   
-    console.log('Filters applied:', filterQuery);
+    if(location || priceFrom || priceTo || statusFilter) {
+      navigate(`/filterProperty?location=${location}&priceFrom=${priceFrom}&priceTo=${priceTo}&status=${statusFilter}`);
+    }
   
-    // If you want to navigate:
-    if(location || priceFrom || priceTo || statusFilter) navigate(`/filterProperty?location=${location}&priceFrom=${priceFrom}&priceTo=${priceTo}&status=${statusFilter}`);
-  
-    // OR: if you just want to set a query object:
     setQuery(filterQuery);
-  
-    // Optional: clear inputs if needed
-    setLocation('');
-    setPriceFrom('');
-    setPriceTo('');
-    setStatusFilter('');
   };
-  
 
   // Handle Sidebar Toggle
   const toggleSidebar = () => {
@@ -89,21 +80,17 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.delete(
-        "http://localhost:3000/users/logout", // Make sure this is the correct backend route
-        { withCredentials: true } // Send cookies for authentication
+        "http://localhost:3000/users/logout",
+        { withCredentials: true }
       );
   
-      console.log(response);
       if (response.status === 200) {
         dispatch(logout()); 
-        console.log('hihelllo');
         localStorage.removeItem('token');
         navigate("/");
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        // Treat as successful logout
-        console.warn("Already logged out or not authenticated, cleaning up frontend session.");
         dispatch(logout());
         localStorage.removeItem('token');
         navigate("/");
@@ -112,13 +99,11 @@ const Header = () => {
       }
     }
   };
-  
-  
 
   return (
-    <div className="h-screen flex flex-col dark:bg-black">
+    <div className="h-screen flex flex-col dark:bg-gray-900">
       {/* Header */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 p-4 shadow-lg">
+      <div className="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 p-4 shadow-lg">
         {/* Logo */}
         <Link
           to="/"
@@ -127,63 +112,77 @@ const Header = () => {
           Choudhary Estate
         </Link>
 
-        {/* Filters Row (Centered) */}
-        <div className="flex-grow flex justify-center mx-4">
-          {status && (
-            <div className="bg-white dark:bg-gray-700 shadow-lg rounded-full px-4 py-2 max-w-5xl flex items-center space-x-2 justify-center mx-auto w-full max-w-full sm:max-w-5xl">
-              
-              {/* Location */}
-              <input
-                type="text"
-                placeholder="Enter city"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-48 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
-              />
+        {/* Enhanced Filters Row */}
+        {status && (
+          <div className="flex-grow flex justify-center mx-4">
+            <div className="bg-white dark:bg-gray-700 shadow-lg rounded-xl px-6 py-3 max-w-5xl flex items-center space-x-4 justify-center mx-auto w-full max-w-full sm:max-w-5xl">
+              {/* Location with icon */}
+              <div className="relative flex-1 min-w-[180px]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaMapMarkerAlt className="text-gray-400 h-4 w-4" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                />
+              </div>
 
-              {/* Price From */}
-              <input
-                type="number"
-                placeholder="Price From"
-                value={priceFrom}
-                onChange={(e) => setPriceFrom(e.target.value)}
-                className="w-24 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
-              />
+              {/* Price range container */}
+              <div className="flex items-center space-x-2 min-w-[200px]">
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={priceFrom}
+                    onChange={(e) => setPriceFrom(e.target.value)}
+                    className="w-full px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  />
+                </div>
+                <span className="text-gray-400">-</span>
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={priceTo}
+                    onChange={(e) => setPriceTo(e.target.value)}
+                    className="w-full px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  />
+                </div>
+              </div>
 
-              {/* Price To */}
-              <input
-                type="number"
-                placeholder="Price To"
-                value={priceTo}
-                onChange={(e) => setPriceTo(e.target.value)}
-                className="w-24 rounded-full px-4 py-2 text-gray-700 dark:text-black-200 focus:outline-none"
-              />
+              {/* Status dropdown */}
+              <div className="relative min-w-[160px]">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all duration-200"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="for rent">For Rent</option>
+                  <option value="sold">Sold</option>
+                  <option value="for sale">For Sale</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
 
-              {/* Status */}
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-36 rounded-full px-2 py-2 text-gray-700 dark:text-black-200 focus:outline-none flex justify-center mx-4"
-              >
-                <option value="" className="text-gray-700 dark:text-black-200">Select Status</option>
-                <option value="for rent">For Rent</option>
-                <option value="sold">Sold</option>
-                <option value="for sale">For Sale</option>
-              </select>
-
-              {/* Apply Button */}
+              {/* Apply button */}
               <button
                 onClick={handleApplyFilters}
-                className="bg-blue-600 text-white rounded-full px-6 py-2 hover:bg-blue-700 transition"
+                className="flex items-center justify-center px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all duration-300 whitespace-nowrap"
               >
-                Apply Filters
+                <FaSearch className="mr-2" />
+                Search
               </button>
             </div>
-          )}
-        </div>
-        {/** filter property ends */}
-
-
+          </div>
+        )}
 
         {/* User and Dark Mode Section */}
         <div className="flex items-center space-x-4">
@@ -254,19 +253,19 @@ const Header = () => {
             {status && (
               <>
                 <Link
-              to="/"
-              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded transition duration-300"
-            >
-              <Home size={20} />
-              {isSidebarOpen && <span>Home</span>}
-            </Link>
-            <Link
-              to="/dashboard"
-              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded transition duration-300"
-            >
-              <Home size={20} />
-              {isSidebarOpen && <span>Dashboard</span>}
-            </Link>
+                  to="/"
+                  className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded transition duration-300"
+                >
+                  <Home size={20} />
+                  {isSidebarOpen && <span>Home</span>}
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded transition duration-300"
+                >
+                  <Home size={20} />
+                  {isSidebarOpen && <span>Dashboard</span>}
+                </Link>
                 <Link
                   to="/add-properties"
                   className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded transition duration-300"
@@ -312,11 +311,8 @@ const Header = () => {
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 bg-gray-50 dark:bg-black p-4">
-          <div className="h-full overflow-y-auto">
-            {/* This is where the Outlet renders the child components */}
-            <Outlet />
-          </div>
+        <div className="flex-1 bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto">
+          <Outlet />
         </div>
       </div>
     </div>
