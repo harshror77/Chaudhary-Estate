@@ -357,18 +357,18 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const getProfile = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
+  const {userId} = (req.params);
   const user = await User.findById(userId)
-    .select("-password -refreshToken")
+    .select("-password -refreshToken -lastLogin")
     .exec();
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
-  const boughtProperties = await Property.find({ owner: userId, status: "bought" })
-    .select("title price location status");
-  const soldProperties = await Property.find({ owner: userId, status: "sold" })
-    .select("title price location status");
+  // const boughtProperties = await Property.find({ owner: userId, status: "bought" })
+  //   .select("title price location status");
+  // const soldProperties = await Property.find({ owner: userId, status: "sold" })
+  //   .select("title price location status");
 
   return res.status(200).json(
     new ApiResponse(
@@ -376,11 +376,11 @@ const getProfile = asyncHandler(async (req, res) => {
       {
         user: {
           ...user.toObject(),
-          lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString() : null,
-          isActive: user.isActive,
+          // lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString() : null,
+          // isActive: user.isActive,
         },
-        boughtProperties,
-        soldProperties,
+        // boughtProperties,
+        // soldProperties,
       },
       "User fetched successfully"
     )

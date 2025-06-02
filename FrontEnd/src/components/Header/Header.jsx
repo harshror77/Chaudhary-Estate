@@ -49,6 +49,11 @@ const Header = () => {
     }
   
     setQuery(filterQuery);
+
+    setLocation('')
+    setPriceFrom('')
+    setPriceTo('')
+    setStatusFilter('')
   };
 
   // Handle Sidebar Toggle

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {deleteProperty, getAllProperties, getPropertyById, updateProperty, uploadProperty, toggleStatus, changePropertyStatus, getMyListings,filterProperties} from "../controllers/property.controller.js"
+import {getProfileListings, deleteProperty, getAllProperties, getPropertyById, updateProperty, uploadProperty, toggleStatus, changePropertyStatus, getMyListings,filterProperties} from "../controllers/property.controller.js"
 import { verifyJWT } from './../middlewares/auth.middleware.js';
 import { upload } from './../middlewares/multer.middleware.js';
 
@@ -18,6 +18,7 @@ router.route("/upload").post(
 
 router.route("/").get(verifyJWT,getAllProperties)
 router.route("/my-listings").get(verifyJWT, getMyListings);
+router.route("/profile-listings/:userId").get(getProfileListings); //for other users
 router.route("/delete/:propertyId").delete(verifyJWT,deleteProperty)
 router.route("/:propertyId").put(verifyJWT,updateProperty)
 

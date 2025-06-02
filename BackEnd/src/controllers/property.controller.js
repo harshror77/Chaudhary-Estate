@@ -173,6 +173,22 @@ const getMyListings = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, properties, "Listings fetched successfully"));
 });
 
+const getProfileListings = asyncHandler(async (req, res) => {
+    const {userId} = (req.params);
+    
+    const properties = await Property.find({ owner: userId })
+        .sort({ createdAt: -1 })
+        .select("title price location status images isActive createdAt");
+
+    if (!properties) {
+        throw new ApiError(404, "No properties found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, properties, "Listings fetched successfully"));
+});
+
 
 const getAllProperties = asyncHandler(async (req, res) => {
     // Fetch all properties
@@ -375,5 +391,6 @@ export {
     toggleStatus,
     changePropertyStatus,
     getMyListings,
-    filterProperties
+    filterProperties,
+    getProfileListings
 }

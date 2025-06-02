@@ -41,7 +41,7 @@ router.route("/avatar").put(
 );
 router.route("/getAllUsers").get(getAllUsers);
 router.route("/logout").delete(logoutUser);//dont verify while logging out
-router.route("/profile").get(verifyJWT, getProfile);
+router.route("/profile/:userId").get(getProfile);
 router.route("/delete").delete(verifyJWT, deleteUser);
 router.route("/google-login").post(googleLogin);
 router.route("/update-profile").patch(verifyJWT,upload.single("avatar"), updateProfile);
