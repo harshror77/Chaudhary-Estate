@@ -201,7 +201,7 @@ const Header = () => {
 
           {/* User Section */}
           {status ? (
-            <Link to="/profile">
+            <Link to="/dashboard">
               <div className="flex items-center space-x-2">
                 {userData?.avatar ? (
                   <img

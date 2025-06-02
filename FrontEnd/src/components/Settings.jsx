@@ -67,7 +67,11 @@ const Settings = () => {
       formPayload.append("fullname", formData.fullname);
       formPayload.append("email", formData.email);
       formPayload.append("phone", formData.phone);
-      formPayload.append("address", JSON.stringify(formData.address));
+      // Flatten the address object
+    formPayload.append("address[street]", formData.address.street);
+    formPayload.append("address[city]", formData.address.city);
+    formPayload.append("address[state]", formData.address.state);
+    formPayload.append("address[postalCode]", formData.address.postalCode);
       
       // Handle image upload if exists
       if (formData.profileImage && typeof formData.profileImage !== "string") {
