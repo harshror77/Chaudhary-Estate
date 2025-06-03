@@ -21,7 +21,11 @@ const createNotification = asyncHandler(async (req, res) => {
 
     const populatedNotification = await Notification.findById(notification._id)
         .populate('sender', 'avatar fullname')
-        .populate('property', 'title price images');
+        .populate({
+            path: 'property',
+            select: 'title price images owner', 
+            populate: { path: 'owner', select: 'fullname avatar' } 
+        });
 
     const io = req.app.get("io");
     if (io) {
@@ -44,7 +48,11 @@ const markAsRead = asyncHandler(async (req, res) => {
         { isRead: true },
         { new: true }
     ).populate('sender', 'avatar fullname')
-     .populate('property', 'title price images');
+     .populate({
+         path: 'property',
+         select: 'title price images owner', 
+         populate: { path: 'owner', select: 'fullname avatar' }
+     });
 
     if (!updatedNotification) {
         throw new ApiError(404, "Notification not found");
@@ -64,8 +72,11 @@ const getAllNotifications = asyncHandler(async (req, res) => {
         .skip(skip)
         .limit(limit)
         .populate('sender', 'avatar fullname')
-        .populate('property', 'title price images');
-
+        .populate({
+            path: 'property',
+            select: 'title price images owner', 
+            populate: { path: 'owner', select: 'fullname avatar' }
+        });
     return res
         .status(200)
         .json(new ApiResponse(200, notifications, "Notifications fetched successfully"));

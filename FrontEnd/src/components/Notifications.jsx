@@ -32,7 +32,8 @@ const Notifications = () => {
         params: { page: 1, limit: 20 },
         withCredentials: true,
       });
-      setNotifications(response.data.data);
+      const updatedData = response.data.data.map(n => ({ ...n, isActionTaken: false }));
+      setNotifications(updatedData);
     } catch (error) {
       toast.error("Failed to load notifications");
     } finally {
@@ -74,6 +75,33 @@ const Notifications = () => {
     }
   };
 
+  // accept and reject offer
+  const handleOfferResponse = async (notification, action) => {
+    const responseMessage = action === "accepted"
+      ? `Your offer for ${notification.property.title} was accepted!`
+      : `Your offer for ${notification.property.title} was rejected.`;
+
+    const notificationType = action === "accepted" ? "ACCEPT_OFFER" : "REJECT_OFFER";
+
+    try {
+      await axios.post("http://localhost:3000/notifications", {
+        type: notificationType,
+        recipient: notification.sender._id,
+        property: notification.property._id,
+        message: responseMessage,
+      }, { withCredentials: true });
+
+      toast.success(`Offer ${action} and notification sent`);
+      setNotifications(prev =>
+        prev.map(n =>
+          n._id === notification._id ? { ...n, isActionTaken: true, actionStatus: action } : n
+        )
+      );
+    } catch (err) {
+      toast.error(`Failed to ${action} offer.`);
+    }
+  };
+
   // Socket.io setup
   useEffect(() => {
     if (!user) return;
@@ -93,7 +121,10 @@ const Notifications = () => {
     });
   
     newSocket.on("notification", (newNotification) => {
-      setNotifications((prev) => [newNotification, ...prev]);
+      setNotifications((prev) => [
+        { ...newNotification, isActionTaken: false },
+        ...prev,
+      ]);
     });
   
     setSocket(newSocket);
@@ -173,6 +204,30 @@ const Notifications = () => {
                       {getNotificationIcon(notification.type)}
                     </div>
                     <p className="text-gray-700">{notification.message}</p>
+                    {notification.type === "BUY_OFFER" && user?._id === notification.property?.owner?._id && (
+                      !notification.isActionTaken ? (
+                        <div className="mt-2 flex gap-3">
+                          <button
+                            onClick={() => handleOfferResponse(notification, "accepted")}
+                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleOfferResponse(notification, "rejected")}
+                            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <p className={`mt-2 text-sm font-medium ${
+                          notification.actionStatus === "accepted" ? "text-green-600" : "text-red-600"
+                        }`}>
+                          Offer {notification.actionStatus}.
+                        </p>
+                      )
+                    )}
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm text-gray-500">
                         {new Date(notification.createdAt).toLocaleTimeString([], {

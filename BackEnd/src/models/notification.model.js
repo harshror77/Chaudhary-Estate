@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['transaction', 'chat', 'favorite', 'system', 'BUY_OFFER'],
+        enum: ['transaction', 'chat', 'favorite', 'system', 'BUY_OFFER', 'REJECT_OFFER', 'ACCEPT_OFFER'],
         required: true
     },
     message: {
