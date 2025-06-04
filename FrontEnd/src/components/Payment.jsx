@@ -83,7 +83,17 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
             name: '',   // optionally fill user’s name
             email: ''   // and email
           },
-          theme: { color: '#528FF0' }
+          theme: { color: '#528FF0' },
+
+          modal: {
+            ondismiss: () => {
+              if (onPaymentFailure) {
+                onPaymentFailure("Payment cancelled by user.");
+              }
+              onClose();
+            }
+          }
+
         };
 
         const razorpayInstance = new window.Razorpay(options);
@@ -91,6 +101,9 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
       } catch (err) {
         console.error(err);
         alert('Could not create order. Please try again.');
+        onClose();
+      }
+      finally {
         onClose();
       }
     })();

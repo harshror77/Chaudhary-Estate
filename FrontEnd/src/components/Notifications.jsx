@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
+import Payment from "../components/Payment";
 
 const getNotificationIcon = (type) => {
   switch (type) {
@@ -24,6 +25,8 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState(null);
+  const [showPayment,setShowPayment] = useState(false);
+  const [numericAmount,setNumericAmount] = useState(0);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -77,8 +80,11 @@ const Notifications = () => {
 
   // accept and reject offer
   const handleOfferResponse = async (notification, action) => {
+    const message = notification.message;
+    const match = message.match(/₹(\d+)/);
+    const numericAmount = parseInt(match[1]); // 4950 as a number
     const responseMessage = action === "accepted"
-      ? `Your offer for ${notification.property.title} was accepted!`
+      ? `Your offer for ${notification.property.title} as ₹${numericAmount} was accepted!`
       : `Your offer for ${notification.property.title} was rejected.`;
 
     const notificationType = action === "accepted" ? "ACCEPT_OFFER" : "REJECT_OFFER";
@@ -101,6 +107,16 @@ const Notifications = () => {
       toast.error(`Failed to ${action} offer.`);
     }
   };
+
+
+  //pay when the offer is accepted
+  const handleOfferAcceptedResponse = (notification,action) => {
+    const message = notification.message;
+    const match = message.match(/₹(\d+)/);
+    setShowPayment(true)
+    setNumericAmount(parseInt(match[1]))
+    
+  }
 
   // Socket.io setup
   useEffect(() => {
@@ -228,6 +244,51 @@ const Notifications = () => {
                         </p>
                       )
                     )}
+
+
+
+                {notification.type === "ACCEPT_OFFER" && (
+                      !notification.isActionTaken ? (
+                        <div className="mt-2 flex gap-3">
+                          <button
+                            onClick={() => handleOfferAcceptedResponse(notification, "accepted")}
+                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            PAY
+                          </button>
+
+                          {showPayment && (
+                            <Payment
+                            amount={numericAmount}           // raw number in rupees
+                            propertyId={notification.property._id}         // real property ID
+                            sellerId={notification.property.owner._id}       // seller’s user ID
+                            onClose={() => setShowPayment(false)}
+
+
+
+
+                          />
+                          )}
+                        </div>
+                      ) : (
+                       null
+                      )
+                    )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm text-gray-500">
                         {new Date(notification.createdAt).toLocaleTimeString([], {
