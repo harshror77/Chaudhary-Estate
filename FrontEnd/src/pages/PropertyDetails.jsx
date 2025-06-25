@@ -25,7 +25,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const apiUrl = "http://localhost:3000";
+        const apiUrl = `${import.meta.env.VITE_BACKEND_URL}`;
         const response = await axios.get(`${apiUrl}/property/fetch/${id}`, {
           withCredentials: true,
         });
@@ -38,7 +38,7 @@ const PropertyDetailsPage = () => {
 
     fetchProperty();
 
-    const newSocket = io("http://localhost:3000");
+    const newSocket = io(`${import.meta.env.VITE_BACKEND_URL}`);
     setSocket(newSocket);
 
     return () => newSocket.disconnect();
@@ -65,7 +65,7 @@ const PropertyDetailsPage = () => {
         sender: "currentUserId",
         receiver: property.owner._id,
       };
-      const response = await axios.post("http://localhost:3000/chat/send", messageData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/send`, messageData);
       setMessages((prev) => [...prev, response.data]);
       setNewMessage("");
       socket.emit("sendMessage", response.data);
@@ -77,7 +77,7 @@ const PropertyDetailsPage = () => {
   const toggleFavorite = async () => {
     try {
       await axios.post(
-        `http://localhost:3000/favorite/${property._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/favorite/${property._id}`,
         {},
         { withCredentials: true }
       );
@@ -95,7 +95,7 @@ const PropertyDetailsPage = () => {
 
     try {
       await axios.post(
-        `http://localhost:3000/notifications/`,
+        `${import.meta.env.VITE_BACKEND_URL}/notifications/`,
         {
           type: "BUY_OFFER",
           recipient: property.owner._id,

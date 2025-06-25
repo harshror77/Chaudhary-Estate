@@ -15,7 +15,7 @@ function App() {
   const dispatch = useDispatch();
   const status = useSelector(state => state.auth.status);
   useEffect(() => {
-    axios.get('http://localhost:3000/users/getCurrentUser', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/getCurrentUser`, { withCredentials: true })
       .then((userData) => {
         console.log("app: ",userData)
         if (userData.data.data) {

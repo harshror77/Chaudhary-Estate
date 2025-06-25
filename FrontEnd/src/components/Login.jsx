@@ -30,7 +30,7 @@ const Login = () => {
   // Handle email/password login
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post("http://localhost:3000/users/login", data, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`, data, {
         withCredentials: true,
       });
       
@@ -48,7 +48,7 @@ const Login = () => {
   // Handle phone login (send OTP)
   const handlePhoneLogin = async (phone) => {
     try {
-      const response = await axios.post("http://localhost:3000/users/login/send-otp", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login/send-otp`, {
         phone,
       },{withCredentials: true});
       if (response.status === 200) {
@@ -63,7 +63,7 @@ const Login = () => {
   // Handle OTP verification
   const handleOtpVerification = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/users/login/verify-otp", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login/verify-otp`, {
         phone: watch("phone"),
         otp,
       },{withCredentials: true});
@@ -82,7 +82,7 @@ const Login = () => {
   // Handle Google login
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post("http://localhost:3000/users/google-login", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/google-login`, {
         token: credentialResponse.credential,
       });
       if (response.status === 200) {

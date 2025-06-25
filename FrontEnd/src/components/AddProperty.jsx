@@ -162,7 +162,7 @@ const AddProperty = () => {
       formData.append('images', file);
     });
 
-    const response = await axios.post('http://localhost:3000/property/upload',formData,{withCredentials:true});
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/property/upload`,formData,{withCredentials:true});
 
     setTimeout(() => {
       setLoading(false);

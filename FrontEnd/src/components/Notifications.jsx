@@ -28,7 +28,7 @@ const Notifications = () => {
   // Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/notifications", {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/notifications`, {
         params: { page: 1, limit: 20 },
         withCredentials: true,
       });
@@ -45,7 +45,7 @@ const Notifications = () => {
   const handleMarkRead = async (notificationId) => {
     try {
       if (notificationId) {
-        await axios.put(`http://localhost:3000/notifications/${notificationId}`, {}, { withCredentials: true });
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/notifications/${notificationId}`, {}, { withCredentials: true });
         setNotifications(prev =>
           prev.map(n => n._id === notificationId ? { ...n, isRead: true } : n)
         );
@@ -54,7 +54,7 @@ const Notifications = () => {
         await Promise.all(
           notifications
             .filter(n => !n.isRead)
-            .map(n => axios.put(`http://localhost:3000/notifications/${n._id}`, {}, { withCredentials: true }))
+            .map(n => axios.put(`${import.meta.env.VITE_BACKEND_URL}/notifications/${n._id}`, {}, { withCredentials: true }))
         );
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
       }
@@ -67,7 +67,7 @@ const Notifications = () => {
   // Delete notification
   const handleDelete = async (notificationId) => {
     try {
-      await axios.delete(`http://localhost:3000/notifications/${notificationId}`, { withCredentials: true });
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/notifications/${notificationId}`, { withCredentials: true });
       setNotifications(prev => prev.filter(n => n._id !== notificationId));
       toast.success("Notification deleted");
     } catch (error) {
@@ -84,7 +84,7 @@ const Notifications = () => {
     const notificationType = action === "accepted" ? "ACCEPT_OFFER" : "REJECT_OFFER";
 
     try {
-      await axios.post("http://localhost:3000/notifications", {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/notifications`, {
         type: notificationType,
         recipient: notification.sender._id,
         property: notification.property._id,
@@ -108,7 +108,7 @@ const Notifications = () => {
   
     console.log("Attempting socket connection with token:", user);
   
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
       path: "/socket.io/",  // Ensure this matches your backend's socket path
       withCredentials: true,
       auth: {

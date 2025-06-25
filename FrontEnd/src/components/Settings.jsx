@@ -82,7 +82,7 @@ const Settings = () => {
       }
 
       const response = await axios.patch(
-        "http://localhost:3000/users/update-profile", 
+        `${import.meta.env.VITE_BACKEND_URL}/users/update-profile`, 
         formPayload, 
         {
           withCredentials: true,
