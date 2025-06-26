@@ -63,7 +63,7 @@ function App() {
 
   return (
     <div>
-      {location.pathname !== '/chat' ? <Header /> : <Outlet />}
+      {location.pathname !== '/chat' && <Header />}
       <Outlet />
     </div>
   );
