@@ -28,7 +28,7 @@ const FilterProperty = () => {
                 };
                 console.log(query)
     
-                const response = await axios.get("http://localhost:3000/property/filterProperty", {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/property/filterProperty`, {
                     params: query,
                     withCredentials: true,
                 });

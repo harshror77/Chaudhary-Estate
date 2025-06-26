@@ -29,9 +29,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchListedProperties = async () => {
       try {
-        const profileUser = await axios.get(`http://localhost:3000/users/profile/${id}`)
+        const profileUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/profile/${id}`)
         setUser(profileUser.data.data.user);
-        const response = await axios.get(`http://localhost:3000/property/profile-listings/${id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/property/profile-listings/${id}`, {
           withCredentials: true,
         });
         setListedProperties(response.data.data);

@@ -16,7 +16,7 @@ console.log('User from Redux:', user);
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/favorite/${user?._id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/favorite/${user?._id}`, {
           withCredentials: true,
         });
         //console.log(response)
@@ -35,7 +35,7 @@ console.log('User from Redux:', user);
 
   const handleRemoveFavorite = async (propertyId) => {
     try {
-      await axios.post(`http://localhost:3000/favorite/${propertyId}`, {}, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/favorite/${propertyId}`, {}, { withCredentials: true });
       setFavorites(prev => prev.filter(fav => fav.property._id !== propertyId));
     } catch (err) {
       console.error('Error removing favorite:', err);

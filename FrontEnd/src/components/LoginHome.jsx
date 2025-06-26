@@ -12,7 +12,7 @@ const LoginHome = () => {
     useEffect(() => {
         const fetchProperties = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/property/", {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/property/`, {
                     withCredentials: true,
                 });
                 setProperties(response.data.data);

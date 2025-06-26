@@ -85,7 +85,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.delete(
-        "http://localhost:3000/users/logout",
+        `${import.meta.env.VITE_BACKEND_URL}/users/logout`,
         { withCredentials: true }
       );
   

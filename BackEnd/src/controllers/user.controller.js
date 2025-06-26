@@ -97,7 +97,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
       const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
       const loggedInUser = await User.findById(user._id).select("-password");
-      const options = { httpOnly: true, secure: true };
+      const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      };
+
 
       user.lastLogin = new Date();
       user.isActive = true;
@@ -139,7 +145,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
     const loggedInUser = await User.findById(user._id).select("-password");
-    const options = { httpOnly: true, secure: true };
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
+
 
     user.lastLogin = new Date();
     user.isActive = true;

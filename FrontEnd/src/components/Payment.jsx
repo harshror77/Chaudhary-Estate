@@ -31,7 +31,7 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
       try {
         // 1. Create order & transaction on backend
         const { data } = await axios.post(
-          'http://localhost:3000/transactions/order',
+          `${import.meta.env.VITE_BACKEND_URL}/transactions/order`,
           { price: amount, propertyId: propertyId, buyerId: buyerId, sellerId: sellerId, paymentMethod: 'UPI' },
           {
             withCredentials: true,
@@ -51,7 +51,7 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
             try {
               // 3. Verify payment on backend
               await axios.post(
-                'http://localhost:3000/transactions/verify',
+                `${import.meta.env.VITE_BACKEND_URL}/transactions/verify`,
                 {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
@@ -61,7 +61,7 @@ export default function Payment({ amount,propertyId,sellerId, onClose }) {
               );
 
               await axios.post(
-                `http://localhost:3000/notifications/`,
+                `${import.meta.env.VITE_BACKEND_URL}/notifications/`,
                 {
                   type: 'transaction', 
                   recipient: sellerId,     

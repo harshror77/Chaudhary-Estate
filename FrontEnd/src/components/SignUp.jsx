@@ -30,7 +30,7 @@ const Signup = () => {
     if (avatar) formData.append("avatar", avatar);
 
     try {
-      const response = await axios.post("http://localhost:3000/users/register", formData, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -54,7 +54,7 @@ const Signup = () => {
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post("http://localhost:3000/users/google-login", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/google-login`, {
         token: credentialResponse.credential,
       });
 

@@ -28,7 +28,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchListedProperties = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/property/my-listings", {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/property/my-listings`, {
           withCredentials: true,
         });
         setListedProperties(response.data.data);
@@ -46,7 +46,7 @@ const Dashboard = () => {
 
   const handleDeleteProperty = async (propertyId) => {
     try {
-      await axios.delete(`http://localhost:3000/property/delete/${propertyId}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/property/delete/${propertyId}`, {
         withCredentials: true,
       });
       setListedProperties(prev => prev.filter(p => p._id !== propertyId));
@@ -60,7 +60,7 @@ const Dashboard = () => {
   const handleChangeStatus = async (propertyId, newStatus) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/property/${propertyId}/change-status`,
+        `${import.meta.env.VITE_BACKEND_URL}/property/${propertyId}/change-status`,
         { status: newStatus },
         { withCredentials: true }
       );

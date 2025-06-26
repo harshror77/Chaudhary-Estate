@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { login, logout } from './store/authSlice.js'
+import { login, logout } from './store/authSlice.js';
 import { Header } from './components/index.js';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,22 +14,47 @@ function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const status = useSelector(state => state.auth.status);
+
   useEffect(() => {
-    axios.get('http://localhost:3000/users/getCurrentUser', { withCredentials: true })
-      .then((userData) => {
-        console.log("app: ",userData)
-        if (userData.data.data) {
-          dispatch(login(userData.data.data));
-          connectSocket(userData.data.data._id);
-        }
-        else {
+    const source = axios.CancelToken.source();
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/users/getCurrentUser`, 
+          { 
+            withCredentials: true,
+            cancelToken: source.token 
+          }
+        );
+
+        if (response.data?.data) {
+          dispatch(login(response.data.data));
+          connectSocket(response.data.data._id);
+        } else {
           dispatch(logout());
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => setLoading(false));
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.error("Auth check error:", error);
+          
+          if (error.response?.status === 401) {
+            dispatch(logout());
+          }
+        }
+      } finally {
+        if (!source.token.reason) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCurrentUser();
+
+
+    return () => {
+      source.cancel("Component unmounted, request canceled");
+    };
   }, [dispatch]);
 
   if (loading) {
@@ -38,7 +63,8 @@ function App() {
 
   return (
     <div>
-      {location.pathname !== '/chat' ? (<Header />) : (<Outlet />)}
+      {location.pathname !== '/chat' ? <Header /> : <Outlet />}
+      <Outlet />
     </div>
   );
 }
