@@ -1,9 +1,10 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import LoginPage from './pages/Login.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+
+import App from './App.jsx';
+import LoginPage from './pages/Login.jsx';
 import SignupPage from './pages/SignUp.jsx';
 import ProfilePage from './pages/Profile.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
@@ -15,17 +16,15 @@ import PropertyDetailsPage from './pages/PropertyDetails.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PropertyPage from './pages/AddProperty.jsx';
 import FilterPropertyPage from './pages/FilterPropertyPage.jsx';
-
 import EditProfile from './pages/EditProfile.jsx';
-import { Provider } from 'react-redux';
-import store from './store/store.js';
 import ChatPage from './pages/ChatPage.jsx';
 
+import { Provider } from 'react-redux';
+import store, { persistor } from './store/store.js';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import { persistor } from './store/store.js';
-import { PersistGate } from "redux-persist/integration/react";
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import AuthCheck from './components/AuthCheck.jsx'; 
+import AuthCheck from './components/AuthCheck.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,8 +32,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/',
-        element: <AuthCheck /> 
+        index: true, // ✅ FIXED: This replaces path: '/'
+        element: <AuthCheck />
       },
       {
         path: '/login',
@@ -79,14 +78,14 @@ const router = createBrowserRouter([
             path: '/editProfile',
             element: <EditProfile />
           }
-        ],
+        ]
       },
       {
         path: '/search',
         element: <SearchResultsPage />
       },
       {
-        path: '/filterProperty',//filter route
+        path: '/filterProperty',
         element: <FilterPropertyPage />
       },
       {
@@ -108,5 +107,5 @@ createRoot(document.getElementById('root')).render(
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>
-  </StrictMode>,
-)
+  </StrictMode>
+);
