@@ -191,6 +191,9 @@ const googleLogin = asyncHandler(async (req, res) => {
 
     const payload = ticket.getPayload();
     const { email, name, picture } = payload;
+    // console.log("hi")
+    // console.log({email})
+    // console.log({name})
 
     // Check if the user already exists; if not, create one
     let user = await User.findOne({ email });
@@ -203,7 +206,10 @@ const googleLogin = asyncHandler(async (req, res) => {
       });
     }
 
+    //console.log(user)
+
     const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
+    //console.log(accessToken)
     const options = {
       httpOnly: true,
       secure: true,

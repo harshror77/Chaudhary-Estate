@@ -28,7 +28,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Handle email/password login
-  const onSubmit = async (data) => {
+  const onSubmit = async (data,event) => {
+    event.preventDefault();
+    event.stopPropagation();
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`, data, {
         withCredentials: true,
@@ -84,9 +86,16 @@ const Login = () => {
   // Handle Google login
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/google-login`, {
-        token: credentialResponse.credential,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/users/google-login`,
+        {
+          token: credentialResponse.credential, // body
+        },
+        {
+          withCredentials: true, // axios config (for cookies)
+        }
+      );
+      
       if (response.status === 200) {
         dispatch(login(response))
         // After successful login
