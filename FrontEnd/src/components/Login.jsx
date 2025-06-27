@@ -91,7 +91,7 @@ const Login = () => {
         dispatch(login(response))
         // After successful login
         localStorage.setItem('token', response.data.data.accessToken); // Store the token in localStorage
-        navigate("/home"); // Redirect to home after successful login
+        navigate("/"); // Redirect to home after successful login
       }
     } catch (error) {
       setErrorMessage("Failed to sign in with Google. Please try again.");
