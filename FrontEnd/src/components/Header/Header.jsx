@@ -115,7 +115,7 @@ const Header = () => {
           to="/"
           className="text-2xl font-extrabold text-gray-800 dark:text-gray-200 hover:text-blue-500 transition duration-300"
         >
-          Choudhary Estate
+          HeavenlyHomes
         </Link>
 
         {/* Enhanced Filters Row */}
