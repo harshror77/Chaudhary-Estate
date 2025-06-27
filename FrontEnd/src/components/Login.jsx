@@ -90,7 +90,7 @@ const Login = () => {
       if (response.status === 200) {
         dispatch(login(response))
         // After successful login
-        localStorage.setItem('token', response.data.token); // Store the token in localStorage
+        localStorage.setItem('token', response.data.data.accessToken); // Store the token in localStorage
         navigate("/home"); // Redirect to home after successful login
       }
     } catch (error) {
