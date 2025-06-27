@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        index: true, // ✅ FIXED: This replaces path: '/'
+        index: true, 
         element: <AuthCheck />
       },
       {

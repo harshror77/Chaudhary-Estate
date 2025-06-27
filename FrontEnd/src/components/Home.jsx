@@ -87,7 +87,7 @@ const Home = () => {
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
             >
-              ChoudharyEstate
+              HeavenlyHomes
             </motion.span>
           </Link>
           <motion.div className="flex gap-6" variants={itemVariants}>
