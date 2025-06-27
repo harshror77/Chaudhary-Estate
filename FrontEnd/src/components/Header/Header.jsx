@@ -84,11 +84,12 @@ const Header = () => {
   // Handle Logout
   const handleLogout = async () => {
     try {
+     // console.log("logoutlogout")
       const response = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/users/logout`,
         { withCredentials: true }
       );
-  
+      
       if (response.status === 200) {
         dispatch(logout()); 
         localStorage.removeItem('token');

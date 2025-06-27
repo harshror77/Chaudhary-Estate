@@ -36,8 +36,10 @@ const Login = () => {
       
       if (response.status === 200) {
         dispatch(login(response))
+        //console.log(response)
         // After successful login
-        localStorage.setItem('token', response.data.token); // Store the token in localStorage
+        console.log(response.data.data.accessToken)
+        localStorage.setItem('token', response.data.data.accessToken); // Store the token in localStorage
         navigate("/"); // Redirect to home after successful login
       }
     } catch (error) {

@@ -204,8 +204,12 @@ const googleLogin = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
-    const options = { httpOnly: true, secure: true, sameSite: "None" };
-
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -225,19 +229,21 @@ const googleLogin = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
   //if user is not attached
-  if (!req.user) {
-    return res.status(401).json(new ApiResponse(401, {}, "User not authenticated"));
-}//
+//   if (!req.user) {
+//     return res.status(401).json(new ApiResponse(401, {}, "User not authenticated"));
+// }//
 
   const user = await User.findByIdAndUpdate(
-    req.user._id,
+    req.user?._id,
     { $set: { refreshToken: null } },
     { new: true }
   );
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: true, secure: true, sameSite: "None" };
 
-  user.isActive = false;
-  await user.save({ validateBeforeSave: false });
+  if(user){
+    user.isActive = false;
+    await user.save({ validateBeforeSave: false });
+  }
 
   return res
     .status(200)
